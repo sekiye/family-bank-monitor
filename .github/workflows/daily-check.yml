@@ -1,0 +1,28 @@
+name: Bank monitor (DEMO ONLY)
+on:
+  schedule:
+    - cron: '17 7 * * *'
+      timezone: Asia/Tokyo
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bank-monitor-demo
+  cancel-in-progress: false
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test rule engine
+        run: npm test
+      - name: Run synthetic demo - NOT bank balances
+        run: npm run check:demo
+      # No bank credentials, private configs or Discord webhook are used.
+      # Do not enable live collection here before terms / Japanese execution region are verified.

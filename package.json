@@ -1,0 +1,18 @@
+{
+  "name": "family-bank-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "diagnose": "node src/cli/diagnose.mjs",
+    "check:demo": "node src/cli/check.mjs --mode=demo",
+    "check:draft": "node src/cli/check.mjs --mode=draft",
+    "check:actual": "node src/cli/check.mjs --mode=actual",
+    "collect:local": "node src/cli/collect-local.mjs",
+    "test:private": "node --test private/draft.test.mjs"
+  }
+}

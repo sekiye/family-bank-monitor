@@ -1,0 +1,15 @@
+# All sensitive and household-specific data belongs here (including settings and balances)
+private/**
+!private/.gitkeep
+.env
+.env.*
+*.auth.json
+**/storageState*.json
+**/.auth/**
+node_modules/
+playwright-report/
+test-results/
+*.trace.zip
+*.png
+*.webm
+.DS_Store

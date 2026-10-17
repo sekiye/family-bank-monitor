@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "timeZone": "Asia/Tokyo",
+  "alertWindowDays": 7,
+  "maxDataAgeHours": 48,
+  "bankHolidays": [],
+  "accounts": [
+    {"id": "demo_a", "owner": "member_1", "label": "DEMO A", "floor": 5000},
+    {"id": "demo_b", "owner": "member_2", "label": "DEMO B", "floor": 0}
+  ],
+  "transfers": [
+    {"id": "demo_01", "from": "demo_a", "to": "demo_b", "day": 25, "amount": 80000, "fee": 220, "method": "automatic", "holidayPolicy": "previous_business_day"}
+  ],
+  "minimumBalanceRules": [
+    {"id": "demo_reward", "account": "demo_a", "day": 8, "amount": 100000}
+  ]
+}

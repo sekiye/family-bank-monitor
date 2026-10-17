@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "mode": "DEMO_ONLY",
+  "accounts": [
+    {"id": "demo_a", "amount": 60000, "observedAt": "DEMO_NOW"},
+    {"id": "demo_b", "amount": 10000, "observedAt": "DEMO_NOW"}
+  ]
+}
