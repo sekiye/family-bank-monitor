@@ -1,0 +1,38 @@
+name: Rakuten connectivity feasibility (PUBLIC ONLY)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rakuten-public-connectivity-feasibility
+  cancel-in-progress: false
+
+jobs:
+  public-preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Pure logic safety tests
+        run: node --test tests/feasibility-check.test.mjs
+      - name: Check egress region and public HTTPS pages without login
+        run: node scripts/feasibility-network.mjs
+      - name: Install public-page browser only (diagnostic)
+        continue-on-error: true
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts playwright@1.64.1
+          npx playwright install --with-deps chromium --no-shell
+      - name: Test Playwright on PUBLIC information page only
+        run: node scripts/feasibility-browser.mjs
+      - name: Explicit limitations
+        run: |
+          echo 'AUTHENTICATED_BANK_ACCESS=NOT_TESTED'
+          echo 'JAPAN_RUNNER_PINNING=NOT_AVAILABLE_ON_FREE_STANDARD'
+          echo 'PRODUCTION_BANK_COLLECTION=DISABLED'
+          echo 'PREFLIGHT_WORKFLOW_DONE=1'
