@@ -1,6 +1,7 @@
-# All sensitive and household-specific data belongs here (including settings and balances)
+# All household-specific information stays outside the public repository.
+# Ignore the entire directory, including .gitkeep.
+private/
 private/**
-!private/.gitkeep
 .env
 .env.*
 *.auth.json
