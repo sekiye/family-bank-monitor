@@ -1,0 +1,25 @@
+name: Same-runner public HTTP browser comparison (NO LOGIN)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bank-public-browser-compare-v19
+  cancel-in-progress: false
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify diagnostic safety and behavior
+        run: node --test tests/feasibility-browser-compare-v19.test.mjs
+      - name: Install Playwright and matching Chromium headless shell
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts playwright@1.64.1
+          npx playwright install --with-deps chromium --only-shell
+      - name: Compare public HTTPS and Chromium on same runner
+        run: node scripts/feasibility-browser-compare-v19.mjs
