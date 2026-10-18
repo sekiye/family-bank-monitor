@@ -20,15 +20,15 @@ jobs:
         with:
           node-version: '22'
       - name: Pure logic safety tests
-        run: node --test tests/feasibility-check.test.mjs tests/feasibility-browser-v14.test.mjs tests/feasibility-browser-v15.test.mjs
+        run: node --test tests/feasibility-check.test.mjs tests/feasibility-browser-v14.test.mjs tests/feasibility-browser-v15.test.mjs tests/feasibility-browser-v16.test.mjs
       - name: Check egress region and public HTTPS pages without login
         run: node scripts/feasibility-network.mjs
       - name: Install public-page browser only (diagnostic)
         run: |
           npm install --no-save --no-package-lock --ignore-scripts playwright@1.64.1
           npx playwright install --with-deps chromium --only-shell
-      - name: Test Playwright on PUBLIC information page only
-        run: node scripts/feasibility-browser.mjs
+      - name: Test Playwright public pages with network matrix (NO LOGIN)
+        run: node scripts/feasibility-browser-v16.mjs
       - name: Explicit limitations
         run: |
           echo 'AUTHENTICATED_BANK_ACCESS=NOT_TESTED'
