@@ -1,0 +1,25 @@
+name: Public HTTP client comparison (NO LOGIN)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-http-client-comparison
+  cancel-in-progress: false
+
+jobs:
+  client-compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test diagnostics
+        run: node --test tests/feasibility-client-compare-v18.test.mjs
+      - name: Compare public-page HTTP clients (read-only, no login)
+        run: node scripts/feasibility-client-compare-v18.mjs
