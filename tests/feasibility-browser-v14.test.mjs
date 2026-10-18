@@ -20,7 +20,13 @@ test('other failures remain distinguishable without leaking message', () => {
 test('CI installs matching binary and fails rather than ignoring installation errors', () => {
   const yml = readFileSync(new URL('../.github/workflows/feasibility-check.yml', import.meta.url), 'utf8');
   assert.match(yml, /playwright install --with-deps chromium --only-shell/);
-  assert.doesNotMatch(yml, /--no-shell|continue-on-error:\s*true/);
+  assert.doesNotMatch(yml, /--no-shell/);
+  // Only the public browser probe may be soft-failed, so transport diagnostics still run.
+  // The original probe outcome must then be re-raised at the end of the job.
+  assert.match(yml, /id: browser_probe\s*\n\s*continue-on-error: true\s*\n\s*run: node scripts\/feasibility-browser-v16\.mjs/);
+  assert.equal((yml.match(/continue-on-error:\s*true/g) ?? []).length, 1);
+  assert.match(yml, /if: always\(\) && steps\.browser_probe\.outcome == 'failure'\s*\n\s*run: exit 1/);
+  assert.match(yml, /if: always\(\)\s*\n\s*run: node scripts\/feasibility-transport-v17\.mjs/);
 });
 
 test('browser probe never attempts authentication or persists browser state', () => {

@@ -38,5 +38,5 @@ export function allowedExactMainRequest(request, url) {
 }
 
 export function outcome(result) {
-  return Boolean(result?.commit && result?.status >= 200 && result?.status < 400);
+  return Boolean(result?.commit && result?.http >= 200 && result?.http < 400);
 }

@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22'
       - name: Pure logic safety tests
-        run: node --test tests/feasibility-check.test.mjs tests/feasibility-browser-v14.test.mjs tests/feasibility-browser-v15.test.mjs tests/feasibility-browser-v16.test.mjs
+        run: node --test tests/feasibility-check.test.mjs tests/feasibility-browser-v14.test.mjs tests/feasibility-browser-v15.test.mjs tests/feasibility-browser-v16.test.mjs tests/feasibility-transport-v17.test.mjs
       - name: Check egress region and public HTTPS pages without login
         run: node scripts/feasibility-network.mjs
       - name: Install public-page browser only (diagnostic)
@@ -28,10 +28,19 @@ jobs:
           npm install --no-save --no-package-lock --ignore-scripts playwright@1.64.1
           npx playwright install --with-deps chromium --only-shell
       - name: Test Playwright public pages with network matrix (NO LOGIN)
+        id: browser_probe
+        continue-on-error: true
         run: node scripts/feasibility-browser-v16.mjs
+      - name: Diagnose public TLS/HTTP stages (NO LOGIN)
+        if: always()
+        run: node scripts/feasibility-transport-v17.mjs
       - name: Explicit limitations
+        if: always()
         run: |
           echo 'AUTHENTICATED_BANK_ACCESS=NOT_TESTED'
           echo 'JAPAN_RUNNER_PINNING=NOT_AVAILABLE_ON_FREE_STANDARD'
           echo 'PRODUCTION_BANK_COLLECTION=DISABLED'
           echo 'PREFLIGHT_WORKFLOW_DONE=1'
+      - name: Fail if browser public-page test failed
+        if: always() && steps.browser_probe.outcome == 'failure'
+        run: exit 1

@@ -20,8 +20,9 @@ test('strict routing only allows exact known main GET', () => {
   assert.equal(allowedExactMainRequest(mock(url+'login'),url),false);
   assert.equal(allowedExactMainRequest(mock(url,'POST'),url),false);
   assert.equal(allowedExactMainRequest(mock(url,'GET',false),url),false);
-  assert.equal(outcome({commit:true,status:200}),true);
-  assert.equal(outcome({commit:true,status:403}),false);
+  assert.equal(outcome({commit:true,http:200}),true);
+  assert.equal(outcome({commit:true,status:200}),false); // A deprecated field must not silently pass.
+  assert.equal(outcome({commit:true,http:403}),false);
   assert.equal(outcome(null),false);
 });
 
@@ -39,5 +40,10 @@ test('workflow invokes v16 and retains exact headless-shell installation', () =>
   const yml=readFileSync(new URL('../.github/workflows/feasibility-check.yml', import.meta.url),'utf8');
   assert.match(yml,/node scripts\/feasibility-browser-v16\.mjs/);
   assert.match(yml,/playwright install --with-deps chromium --only-shell/);
-  assert.doesNotMatch(yml,/continue-on-error:\s*true/);
+  // continue-on-error is intentional only for the public browser probe.
+  // A final step checks the pre-continue-on-error outcome to preserve failure semantics.
+  assert.match(yml,/id: browser_probe\s*\n\s*continue-on-error: true\s*\n\s*run: node scripts\/feasibility-browser-v16\.mjs/);
+  assert.equal((yml.match(/continue-on-error:\s*true/g) ?? []).length, 1);
+  assert.match(yml,/if: always\(\) && steps\.browser_probe\.outcome == 'failure'\s*\n\s*run: exit 1/);
+  assert.match(yml,/if: always\(\)\s*\n\s*run: node scripts\/feasibility-transport-v17\.mjs/);
 });
